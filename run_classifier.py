@@ -13,7 +13,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """BERT finetuning runner."""
-
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
@@ -21,6 +20,7 @@ from __future__ import print_function
 import collections
 import csv
 import os
+import pandas as pd
 import modeling
 import optimization
 import tokenization
@@ -203,6 +203,52 @@ class DataProcessor(object):
         lines.append(line)
       return lines
 
+class SentenceProcessor(DataProcessor):
+    """Processor for the Sentiment Analysis task"""
+    #读取训练集
+    def get_train_examples(self, data_dir):
+      file_path = os.path.join(data_dir, 'train.tsv')
+      train_df = pd.read_csv(file_path, encoding='utf-8')
+      train_data = []
+
+      for index, train in enumerate(train_df.values):
+          print(train)
+          guid = 'train-%d' % index
+          text_a = tokenization.convert_to_unicode(str(train[1]) + " " + str(train[2]))
+          # text_b = tokenization.convert_to_unicode(str(train[1]))
+          label = str(train[3])
+          train_data.append(InputExample(guid=guid, text_a=text_a, text_b=None, label=label))
+      return train_data
+    #读取验证集
+    def get_dev_examples(self, data_dir):
+      file_path = os.path.join(data_dir, 'dev.tsv')
+      dev_df = pd.read_csv(file_path, encoding='utf-8')
+      dev_data = []
+      for index, dev in enumerate(dev_df.values):
+          guid = 'dev-%d' % index
+          text_a = tokenization.convert_to_unicode(str(dev[1]) + " " + str(dev[2]))
+          # text_b = tokenization.convert_to_unicode(str(dev[1]))
+          label = str(dev[3])
+          dev_data.append(InputExample(guid=guid, text_a=text_a, text_b=None, label=label))
+      return dev_data
+
+      #读取测试集
+    def get_test_examples(self, data_dir):
+        file_path = os.path.join(data_dir, 'test.tsv')
+        test_df = pd.read_csv(file_path, encoding='utf-8')
+
+        test_data = []
+
+        for index, test in enumerate(test_df.values):
+            guid = 'test-%d' % index
+            text_a = tokenization.convert_to_unicode(str(test[1]) + " " + str(test[2]))
+            # text_b = tokenization.convert_to_unicode(str(test[1]))
+            label = '0'
+            test_data.append(InputExample(guid=guid, text_a=text_a, text_b=None, label=label))
+        return test_data
+
+    def get_labels(self):
+        return ['0', '1', '2']
 
 class XnliProcessor(DataProcessor):
   """Processor for the XNLI data set."""
@@ -788,6 +834,7 @@ def main(_):
       "mnli": MnliProcessor,
       "mrpc": MrpcProcessor,
       "xnli": XnliProcessor,
+      "sent": SentenceProcessor  #自己的processor
   }
 
   tokenization.validate_case_matches_checkpoint(FLAGS.do_lower_case,
@@ -928,6 +975,7 @@ def main(_):
   if FLAGS.do_predict:
     predict_examples = processor.get_test_examples(FLAGS.data_dir)
     num_actual_predict_examples = len(predict_examples)
+    print(num_actual_predict_examples + "FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF")
     if FLAGS.use_tpu:
       # TPU requires a fixed batch size for all batches, therefore the number
       # of examples must be a multiple of the batch size, or else examples

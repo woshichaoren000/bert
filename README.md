@@ -1,3 +1,14 @@
+# 测试用
+
+在测试机中：
+    训练模型：
+    1. `source activate Bert`
+    2. `nohup python run_classifier.py --task_name=sent --do_train=true --do_eval=true --data_dir=data --vocab_file=chinese_L-12_H-768_A-12/vocab.txt --bert_config_file=chinese_L-12_H-768_A-12/bert_config.json --init_checkpoint=chinese_L-12_H-768_A-12/bert_model.ckpt --max_seq_length=94 --train_batch_size=32 --learning_rate=2e-5 --num_train_epochs=3.0 --output_dir=./tmp/model &` 其中，`max_seq_length`为最大词组长，`train_batch_size`为每次训练抓取的样本数，`num_train_epochs`为训练样本集被使用的轮次。
+
+    预测数据：
+    1. `source activate Bert`
+    2. `nohup python run_classifier.py --task_name=sent --do_predict=true --data_dir=data --vocab_file=chinese_L-12_H-768_A-12/vocab.txt  --bert_config_file=chinese_L-12_H-768_A-12/bert_config.json --init_checkpoint=./model0-84741145-94-16/model.ckpt-1238 --max_seq_length=94  --output_dir=model0-84741145-94-16/emotion_output/ &`
+
 # BERT
 
 **\*\*\*\*\* New May 31st, 2019: Whole Word Masking Models \*\*\*\*\***
