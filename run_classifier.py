@@ -207,29 +207,31 @@ class SentenceProcessor(DataProcessor):
     """Processor for the Sentiment Analysis task"""
     #读取训练集
     def get_train_examples(self, data_dir):
-      file_path = os.path.join(data_dir, 'train.tsv')
+      file_path = os.path.join(data_dir, 'train.csv')
       train_df = pd.read_csv(file_path, encoding='utf-8')
       train_data = []
 
       for index, train in enumerate(train_df.values):
-          print(train)
+          # print(train)
           guid = 'train-%d' % index
           text_a = tokenization.convert_to_unicode(str(train[1]) + " " + str(train[2]))
           # text_b = tokenization.convert_to_unicode(str(train[1]))
-          label = str(train[3])
+          label = str(train[0])
           train_data.append(InputExample(guid=guid, text_a=text_a, text_b=None, label=label))
+
       return train_data
+
     #读取验证集
     def get_dev_examples(self, data_dir):
-      file_path = os.path.join(data_dir, 'dev.tsv')
-      dev_df = pd.read_csv(file_path, encoding='utf-8')
+      # file_path = os.path.join(data_dir, 'dev.tsv')
+      # dev_df = pd.read_csv(file_path, encoding='utf-8')
       dev_data = []
-      for index, dev in enumerate(dev_df.values):
-          guid = 'dev-%d' % index
-          text_a = tokenization.convert_to_unicode(str(dev[1]) + " " + str(dev[2]))
-          # text_b = tokenization.convert_to_unicode(str(dev[1]))
-          label = str(dev[3])
-          dev_data.append(InputExample(guid=guid, text_a=text_a, text_b=None, label=label))
+      # for index, dev in enumerate(dev_df.values):
+          # guid = 'dev-%d' % index
+          # text_a = tokenization.convert_to_unicode(str(dev[1]) + " " + str(dev[2]))
+          # # text_b = tokenization.convert_to_unicode(str(dev[1]))
+          # label = str(dev[3])
+          # dev_data.append(InputExample(guid=guid, text_a=text_a, text_b=None, label=label))
       return dev_data
 
       #读取测试集
